@@ -26,7 +26,6 @@ public class KXServer {
     public void start() throws InterruptedException {
         logger.atInfo().setMessage("Starting K.x server")
                 .addKeyValue("port", port).log();
-        final var handler = new KXClientHandler();
         EventLoopGroup serverGroup = new NioEventLoopGroup(1);
         EventLoopGroup clientGroup = new NioEventLoopGroup();
         try {
@@ -40,7 +39,7 @@ public class KXServer {
                             logger.atDebug().setMessage("New connection")
                                             .addKeyValue("source", ch.remoteAddress())
                                                     .log();
-                            ch.pipeline().addLast(handler);
+                            ch.pipeline().addLast( new KafkaRequestDecoder(128));
                         }
                     });
             b.bind().sync().channel().closeFuture().sync();
